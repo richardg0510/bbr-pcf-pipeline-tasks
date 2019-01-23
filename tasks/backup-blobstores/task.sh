@@ -11,17 +11,17 @@ EOF
 # Activate service account
 gcloud auth activate-service-account --key-file ${GCP_CREDFILE}
 
-# copy buildpacks bucket
-gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_BUILDPACKS} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_BUILDPACKS}
-
 # copy director bucket
-gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_DIRECTOR} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_DIRECTOR}
+gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_DIRECTOR} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_DIRECTOR} &
+
+# copy buildpacks bucket
+gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_BUILDPACKS} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_BUILDPACKS} &
 
 # copy droplets bucket
-gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_DROPLETS} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_DROPLETS}
+gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_DROPLETS} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_DROPLETS} &
 
 # copy packages bucket
-gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_PACKAGES} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_PACKAGES}
+gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_PACKAGES} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_PACKAGES} &
 
 # copy resources bucket
-gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_BACKUP} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_BACKUP}
+gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_RESOURCES} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_RESOURCES} &
