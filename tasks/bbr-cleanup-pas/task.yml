@@ -12,12 +12,8 @@ inputs:
     # Directory containing the bbr executable
   - name: binary
 
-outputs:
-    # Contains `ert-backup.tar` artifact created by `bbr deployment backup`
-  - name: ert-backup-artifact
-
 run:
-  path: bbr-pipeline-tasks-repo/tasks/bbr-backup-ert/task.sh
+  path: bbr-pipeline-tasks-repo/tasks/bbr-cleanup-pas/task.sh
 
 params:
   # The Ops Manager URL, e.g. https://pcf.example.com

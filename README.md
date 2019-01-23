@@ -8,8 +8,8 @@ This is a collection of [Concourse](https://concourse.ci) tasks for backing up a
 - [bbr-cleanup-director](tasks/bbr-cleanup-director/task.yml): Run `bbr director backup-cleanup`
 
 ### PAS/ERT
-- [bbr-backup-ert](tasks/bbr-backup-ert/task.yml): Run `bbr deployment backup` for PAS/ERT
-- [bbr-cleanup-ert](tasks/bbr-cleanup-ert/task.yml): Run `bbr deployment backup-cleanup` for PAS/ERT
+- [bbr-backup-pas](tasks/bbr-backup-pas/task.yml): Run `bbr deployment backup` for PAS/ERT
+- [bbr-cleanup-pas](tasks/bbr-cleanup-pas/task.yml): Run `bbr deployment backup-cleanup` for PAS/ERT
 
 ### PKS
 - [bbr-backup-pks](tasks/bbr-backup-pks/task.yml): Run `bbr deployment backup` for PKS control plane

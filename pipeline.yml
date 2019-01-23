@@ -1,0 +1,135 @@
+---
+jobs:
+- name: export-om-installation
+  serial: true
+  plan:
+  - aggregate:
+    - get: bbr-pipeline-tasks-repo
+  - task: export-om-installation
+    file: bbr-pipeline-tasks-repo/tasks/export-om-installation/task.yml
+    params: &opsman_credentials
+      SKIP_SSL_VALIDATION: ((skip-ssl-validation))
+      OPSMAN_URL: ((opsman_domain_or_ip_address))
+      OPSMAN_USERNAME: ((opsman_admin_username))
+      OPSMAN_PASSWORD: ((opsman_admin_password))
+  - put: om-backup-artifact
+    params:
+      file: om-installation/installation-*.zip
+
+- name: bbr-backup-pas
+  serial: true
+  plan:
+  - aggregate:
+    - get: bbr-pipeline-tasks-repo
+    - get: bbr-release
+  - task: extract-binary
+    tags:
+    - ((concourse-worker-tag))
+    file: bbr-pipeline-tasks-repo/tasks/extract-bbr-binary/task.yml
+  - task: bbr-backup-pas
+    tags:
+    - ((concourse-worker-tag))
+    file: bbr-pipeline-tasks-repo/tasks/bbr-backup-pas/task.yml
+    params:
+      <<: *opsman_credentials
+    on_failure:
+      task: bbr-cleanup-pas
+      tags:
+      - ((concourse-worker-tag))
+      file: bbr-pipeline-tasks-repo/tasks/bbr-cleanup-pas/task.yml
+      params:
+        <<: *opsman_credentials
+  - put: pas-backup-bucket
+    params:
+      file: pas-backup-artifact/pas-backup-*.tar
+
+- name: bbr-backup-director
+  serial: true
+  plan:
+  - aggregate:
+    - get: bbr-pipeline-tasks-repo
+    - get: bbr-release
+  - task: extract-binary
+    tags:
+    - ((concourse-worker-tag))
+    file: bbr-pipeline-tasks-repo/tasks/extract-bbr-binary/task.yml
+  - task: bbr-backup-director
+    tags:
+    - ((concourse-worker-tag))
+    file: bbr-pipeline-tasks-repo/tasks/bbr-backup-director/task.yml
+    params:
+        <<: *opsman_credentials
+    on_failure:
+      task: bbr-cleanup-director
+      tags:
+      - ((concourse-worker-tag))
+      file: bbr-pipeline-tasks-repo/tasks/bbr-cleanup-director/task.yml
+      params:
+        <<: *opsman_credentials
+  - put: director-backup-bucket
+    params:
+      file: director-backup-artifact/director-backup-*.tar
+
+- name: backup-blobstores
+  serial: true
+  plan:
+  - aggregate:
+    - get: bbr-pipeline-tasks-repo
+  - task: backup-blobstores
+    tags:
+    - ((concourse-worker-tag))
+    file: bbr-pipeline-tasks-repo/tasks/backup-blobstores/task.yml
+    params:
+      GCP_CREDFILE_CONTENTS: ((gcp_metadata_credfile_contents))
+      GCP_STORAGE_BUCKET_BUILDPACKS: ((buildpacks_bucket))
+      GCP_STORAGE_BUCKET_DIRECTOR: ((director_bucket))
+      GCP_STORAGE_BUCKET_DROPLETS: ((droplets_bucket))
+      GCP_STORAGE_BUCKET_PACKAGES: ((packages_bucket))
+      GCP_STORAGE_BUCKET_RESOURCES: ((resources_bucket))
+      GCP_STORAGE_BUCKET_BACKUP: ((backup-artifact-bucket))
+
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+- name: gcs-resource
+  type: docker-image
+  source:
+    repository: frodenas/gcs-resource
+
+resources:
+- name: bbr-pipeline-tasks-repo
+  type: git
+  source:
+    uri: https://github.com/richardg0510/bbr-pcf-pipeline-tasks.git
+    branch: master
+
+- name: om-backup-artifact
+  type: gcs-resource
+  source:
+    bucket: ((backup-artifact-bucket))
+    json_key: ((gcp_metadata_credfile_contents))
+    regexp: installation-(.*).zip
+
+- name: pas-backup-bucket
+  type: gcs-resource
+  source:
+    bucket: ((backup-artifact-bucket))
+    json_key: ((gcp_metadata_credfile_contents))
+    regexp: pas-backup-(.*).tar
+
+- name: director-backup-bucket
+  type: gcs-resource
+  source:
+    bucket: ((backup-artifact-bucket))
+    json_key: ((gcp_metadata_credfile_contents))
+    regexp: director-backup-(.*).tar
+
+- name: bbr-release
+  type: pivnet
+  source:
+    api_token: ((pivnet_token))
+    product_slug: p-bosh-backup-and-restore

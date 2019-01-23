@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: czero/cflinuxfs2}
+
+inputs:
+  - name: bbr-pipeline-tasks-repo
+
+params:
+  GCP_CREDFILE_CONTENTS:
+  GCP_STORAGE_BUCKET_BUILDPACKS:
+  GCP_STORAGE_BUCKET_DIRECTOR:
+  GCP_STORAGE_BUCKET_DROPLETS:
+  GCP_STORAGE_BUCKET_PACKAGES:
+  GCP_STORAGE_BUCKET_RESOURCES:
+  GCP_STORAGE_BUCKET_BACKUP:
+
+
+run:
+  path: bbr-pipeline-tasks-repo/tasks/backup-blobstores/task.sh
