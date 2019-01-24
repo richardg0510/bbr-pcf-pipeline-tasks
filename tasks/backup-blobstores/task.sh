@@ -11,9 +11,6 @@ EOF
 # Activate service account
 gcloud auth activate-service-account --key-file ${GCP_CREDFILE}
 
-# copy director bucket
-gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_DIRECTOR} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_DIRECTOR} &
-
 # copy buildpacks bucket
 gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_BUILDPACKS} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_BUILDPACKS} &
 
@@ -25,3 +22,6 @@ gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_PACKAGES} gs://${GCP_STORAGE_BUCKET_BA
 
 # copy resources bucket
 gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_RESOURCES} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_RESOURCES} &
+
+# copy director bucket
+gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_DIRECTOR} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_DIRECTOR}
