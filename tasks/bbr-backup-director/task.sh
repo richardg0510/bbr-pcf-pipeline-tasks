@@ -11,7 +11,7 @@ pushd director-backup-artifact
     --private-key-path <(echo "${BOSH_PRIVATE_KEY}") \
     backup
 
-  tar -cvf director-backup-$(date +"%Y-%b-%d").tar -- *
+  tar -cvf $(date +"%Y-%b-%d")-director-backup.tar -- *
   # shellcheck disable=SC2086
   rm -rf ${BOSH_ENVIRONMENT}_*
 popd

@@ -18,5 +18,5 @@ bosh --environment="$BOSH_ENVIRONMENT" \
 pushd pas-backup-artifact
   # shellcheck disable=SC1090
   source "../$scripts/deployment-backup"
-  tar -cvf pas-backup-$(date +"%Y-%b-%d").tar -- *
+  tar -cvf $(date +"%Y-%b-%d")-pas-backup.tar -- *
 popd

@@ -1,18 +1,18 @@
 ---
 jobs:
-- name: regulator
-  serial: true
-  plan:
-  - aggregate:
-    - get: bbr-pipeline-tasks-repo
+# - name: regulator
+#   serial: true
+#   plan:
+#   - aggregate:
+#     - get: bbr-pipeline-tasks-repo
 
 - name: export-om-installation
   serial: true
   plan:
   - aggregate:
     - get: bbr-pipeline-tasks-repo
-      passed: [regulator]
-      trigger: true
+      # passed: [regulator]
+      # trigger: true
   - task: export-om-installation
     file: bbr-pipeline-tasks-repo/tasks/export-om-installation/task.yml
     params: &opsman_credentials
@@ -22,15 +22,15 @@ jobs:
       OPSMAN_PASSWORD: ((opsman_admin_password))
   - put: om-backup-artifact
     params:
-      file: om-installation/installation-*.zip
+      file: om-installation/*-installation.zip
 
 - name: bbr-backup-pas
   serial: true
   plan:
   - aggregate:
     - get: bbr-pipeline-tasks-repo
-      passed: [regulator]
-      trigger: true
+      # passed: [regulator]
+      # trigger: true
     - get: bbr-release
   - task: extract-binary
     tags:
@@ -51,15 +51,15 @@ jobs:
         <<: *opsman_credentials
   - put: pas-backup-bucket
     params:
-      file: pas-backup-artifact/pas-backup-*.tar
+      file: pas-backup-artifact/*-pas-backup.tar
 
 - name: bbr-backup-director
   serial: true
   plan:
   - aggregate:
     - get: bbr-pipeline-tasks-repo
-      passed: [regulator]
-      trigger: true
+      # passed: [regulator]
+      # trigger: true
     - get: bbr-release
   - task: extract-binary
     tags:
@@ -80,15 +80,15 @@ jobs:
         <<: *opsman_credentials
   - put: director-backup-bucket
     params:
-      file: director-backup-artifact/director-backup-*.tar
+      file: director-backup-artifact/*-director-backup.tar
 
 - name: backup-blobstores
   serial: true
   plan:
   - aggregate:
     - get: bbr-pipeline-tasks-repo
-      passed: [regulator]
-      trigger: true
+      # passed: [regulator]
+      # trigger: true
   - task: backup-blobstores
     tags:
     - ((concourse-worker-tag))
@@ -101,6 +101,8 @@ jobs:
       GCP_STORAGE_BUCKET_PACKAGES: ((packages_bucket))
       GCP_STORAGE_BUCKET_RESOURCES: ((resources_bucket))
       GCP_STORAGE_BUCKET_BACKUP: ((backup-artifact-bucket))
+      GCP_PROJECT: ((opsman_gcp_project))
+      GCP_CLOUD_SQL_INSTANCE: ((cloud_sql_instance))
 
 resource_types:
 - name: pivnet
@@ -126,21 +128,21 @@ resources:
   source:
     bucket: ((backup-artifact-bucket))
     json_key: ((gcp_metadata_credfile_contents))
-    regexp: installation-(.*).zip
+    regexp: (.*)-installation.zip
 
 - name: pas-backup-bucket
   type: gcs-resource
   source:
     bucket: ((backup-artifact-bucket))
     json_key: ((gcp_metadata_credfile_contents))
-    regexp: pas-backup-(.*).tar
+    regexp: (.*)-pas-backup.tar
 
 - name: director-backup-bucket
   type: gcs-resource
   source:
     bucket: ((backup-artifact-bucket))
     json_key: ((gcp_metadata_credfile_contents))
-    regexp: director-backup-(.*).tar
+    regexp: (.*)-director-backup.tar
 
 - name: bbr-release
   type: pivnet
