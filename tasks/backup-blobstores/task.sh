@@ -25,3 +25,6 @@ gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_RESOURCES} gs://${GCP_STORAGE_BUCKET_B
 
 # copy director bucket
 gsutil -m cp -r gs://${GCP_STORAGE_BUCKET_DIRECTOR} gs://${GCP_STORAGE_BUCKET_BACKUP}/$(date +"%Y-%b-%d")/${GCP_STORAGE_BUCKET_DIRECTOR}
+
+# create backup of cloud sql database
+gcloud sql backups create --project=${GCP_PROJECT} --instance=${GCP_CLOUD_SQL_INSTANCE}

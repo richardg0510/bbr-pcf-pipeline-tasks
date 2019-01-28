@@ -16,7 +16,8 @@ params:
   GCP_STORAGE_BUCKET_PACKAGES:
   GCP_STORAGE_BUCKET_RESOURCES:
   GCP_STORAGE_BUCKET_BACKUP:
-
+  GCP_PROJECT:
+  GCP_CLOUD_SQL_INSTANCE:
 
 run:
   path: bbr-pipeline-tasks-repo/tasks/backup-blobstores/task.sh
